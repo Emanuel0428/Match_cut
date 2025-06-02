@@ -1,0 +1,10 @@
+Flask==3.0.2
+Pillow==10.2.0
+moviepy==1.0.3
+numpy==1.26.4
+matplotlib>=3.4      # For font fallback mechanism
+mistralai==0.1.3
+python-dotenv==1.0.1
+google-generativeai==0.3.2
+anthropic==0.18.1
+deepseek==0.1.0
