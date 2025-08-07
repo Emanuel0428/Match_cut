@@ -8,3 +8,6 @@ python-dotenv==1.0.1
 google-generativeai==0.3.2
 anthropic==0.18.1
 deepseek==0.1.0
+gunicorn==21.2.0     # For production deployment
+uuid==1.30           # For generating unique filenames
+Werkzeug==3.0.2      # For secure file handling

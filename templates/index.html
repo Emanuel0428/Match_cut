@@ -6,8 +6,25 @@
     <title>Generador de Videos con Texto Dinámico</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-film"></i>
+                <span>MatchCut</span>
+            </div>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="#how-it-works" class="nav-link">Cómo Funciona</a>
+                <a href="#examples" class="nav-link">Ejemplos</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <header>
             <h1>Generador de Videos con Texto Dinámico</h1>
@@ -31,13 +48,37 @@
             </div>
         {% endif %}
 
-        <form method="POST" action="{{ url_for('generate') }}" id="videoForm" class="card">
+        <form method="POST" action="{{ url_for('generate') }}" id="videoForm" class="card" enctype="multipart/form-data">
             <div class="form-section">
                 <h2>Configuración del Texto</h2>
                 <div class="form-group">
                     <label for="highlighted_text">Texto Destacado:</label>
                     <input type="text" id="highlighted_text" name="highlighted_text" value="Experiencia de Juego" required>
                     <small>Este texto aparecerá resaltado en el video</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="selected_font">Fuente del Texto:</label>
+                    <select id="selected_font" name="selected_font">
+                        <option value="random">Aleatorio (cambia entre frames)</option>
+                        <optgroup label="Fuentes Disponibles">
+                            <option value="AncizarSerif-VariableFont_wght.ttf">Ancizar Serif</option>
+                            <option value="AncizarSerif-Italic-VariableFont_wght.ttf">Ancizar Serif Italic</option>
+                            <option value="Lato-Regular.ttf">Lato</option>
+                            <option value="Lato-Bold.ttf">Lato Bold</option>
+                            <option value="Montserrat-Regular.ttf">Montserrat</option>
+                            <option value="Montserrat-Bold.ttf">Montserrat Bold</option>
+                            <option value="OpenSans-Regular.ttf">Open Sans</option>
+                            <option value="OpenSans-Bold.ttf">Open Sans Bold</option>
+                            <option value="Roboto-Regular.ttf">Roboto</option>
+                            <option value="Roboto-Bold.ttf">Roboto Bold</option>
+                            <option value="SourceSerif4-Regular.ttf">Source Serif</option>
+                            <option value="SourceSerif4-Bold.ttf">Source Serif Bold</option>
+                        </optgroup>
+                    </select>
+                    <div class="font-preview">
+                        <span id="font-preview-text">Aa Bb Cc 123</span>
+                    </div>
                 </div>
 
                 <div class="color-group">
@@ -113,13 +154,59 @@
 
                 <div class="form-group">
                     <label for="background_texture">Textura de Fondo:</label>
-                    <select id="background_texture" name="background_texture">
-                        <option value="none">Sin textura (color sólido)</option>
-                        <option value="textura1">Textura 1</option>
-                        <option value="textura2">Textura 2</option>
-                        <option value="textura3">Textura 3</option>
-                    </select>
-                    <small>Selecciona una textura para el fondo o usa un color sólido</small>
+                    <div class="texture-selector">
+                        <div class="texture-option">
+                            <input type="radio" id="texture_none" name="background_texture" value="none" checked>
+                            <label for="texture_none" class="texture-label">
+                                <div class="texture-preview solid-color"></div>
+                                <span>Sin textura</span>
+                            </label>
+                        </div>
+                        <div class="texture-option">
+                            <input type="radio" id="texture_1" name="background_texture" value="textura1">
+                            <label for="texture_1" class="texture-label">
+                                <div class="texture-preview texture1"></div>
+                                <span>Textura 1</span>
+                            </label>
+                        </div>
+                        <div class="texture-option">
+                            <input type="radio" id="texture_2" name="background_texture" value="textura2">
+                            <label for="texture_2" class="texture-label">
+                                <div class="texture-preview texture2"></div>
+                                <span>Textura 2</span>
+                            </label>
+                        </div>
+                        <div class="texture-option">
+                            <input type="radio" id="texture_3" name="background_texture" value="textura3">
+                            <label for="texture_3" class="texture-label">
+                                <div class="texture-preview texture3"></div>
+                                <span>Textura 3</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="custom-texture">
+                        <label for="texture_upload" class="upload-button">
+                            <i class="fas fa-plus"></i> Añadir textura personalizada
+                        </label>
+                        <input type="file" id="texture_upload" name="texture_file" accept="image/jpeg,image/png" class="hidden-upload">
+                        <div id="custom_texture_preview" class="custom-texture-preview" style="display: none;">
+                            <div class="texture-option">
+                                <input type="radio" id="texture_custom" name="background_texture" value="custom">
+                                <label for="texture_custom" class="texture-label">
+                                    <div class="texture-preview" id="uploaded_texture_preview"></div>
+                                    <span>Personalizada</span>
+                                </label>
+                                <button type="button" class="remove-custom-texture" id="remove_custom_texture">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <small>Selecciona una textura para el fondo o usa un color sólido. Las texturas personalizadas se procesarán al momento de generar el video.</small>
+                    <div class="texture-tips">
+                        <i class="fas fa-lightbulb"></i>
+                        <p>Las texturas añaden profundidad a tu video. Para obtener mejores resultados, sube imágenes sutiles con patrones no muy contrastantes. Formatos soportados: JPEG y PNG.</p>
+                    </div>
                 </div>
 
                 <div class="form-group ai-option">
@@ -127,6 +214,11 @@
                         <input type="checkbox" id="ai_enabled" name="ai_enabled" value="true" checked>
                         <span>Usar IA para Generar Texto</span>
                     </label>
+                    
+                    <div class="ai-info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Al activar esta opción, la IA generará texto coherente y con sentido alrededor de tu frase destacada, creando un contexto más natural. Para obtener mejores resultados, usa Mistral o Anthropic Claude.</p>
+                    </div>
                     
                     <div id="ai-config" class="ai-config">
                         <div class="ai-provider-select">
@@ -149,6 +241,23 @@
                             </div>
                             <small id="api-help" class="api-help">La API key se usará solo para esta sesión y no se almacenará</small>
                         </div>
+                        
+                        <div class="ai-provider-note">
+                            <strong>Nota:</strong> Cada proveedor tiene sus propias características. Anthropic Claude suele producir los textos más coherentes y contextuales, seguido por Mistral AI.
+                        </div>
+                        
+                        <div class="text-density-control">
+                            <label for="text_density">Densidad del Texto:</label>
+                            <div class="density-options">
+                                <input type="range" id="text_density" name="text_density" min="1" max="3" value="2" step="1">
+                                <div class="density-labels">
+                                    <span>Baja</span>
+                                    <span>Media</span>
+                                    <span>Alta</span>
+                                </div>
+                            </div>
+                            <small>Controla la cantidad de texto que aparecerá en la pantalla. Mayor densidad ayuda a evitar espacios vacíos.</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,6 +279,87 @@
         </div>
     </div>
 
+    <div class="content-section card" id="how-it-works">
+        <h2><i class="fas fa-question-circle"></i> Cómo Funciona</h2>
+        <div class="step-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Configura tu Texto</h3>
+                    <p>Elige el texto que quieres destacar, selecciona la fuente y los colores para crear una apariencia única.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Ajusta los Efectos</h3>
+                    <p>Personaliza el desenfoque, la textura de fondo y otros efectos visuales para darle más impacto.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Genera con IA (Opcional)</h3>
+                    <p>Utiliza la IA para crear textos relevantes y contextualizados que complementen tu mensaje principal.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>¡Descarga tu Video!</h3>
+                    <p>En pocos segundos, tendrás un video profesional listo para usar en tus presentaciones o redes sociales.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-section card" id="examples">
+        <h2><i class="fas fa-film"></i> Ejemplos de Videos</h2>
+        <div class="examples-grid">
+            <div class="example">
+                <div class="example-video">
+                    <video width="100%" controls>
+                        <source src="{{ url_for('download_file', filename='text_match_cut_5d578016-1faa-4af4-be46-a46b8c391602.mp4') }}" type="video/mp4">
+                        Tu navegador no soporta el elemento video.
+                    </video>
+                </div>
+                <div class="example-caption">
+                    <h3>Estilo Clásico</h3>
+                    <p>Fuente sans-serif con desenfoque radial</p>
+                </div>
+            </div>
+            <div class="example">
+                <div class="example-video">
+                    <video width="100%" controls>
+                        <source src="{{ url_for('download_file', filename='text_match_cut_695525d3-12ee-44e0-a6db-bae753f12daf.mp4') }}" type="video/mp4">
+                        Tu navegador no soporta el elemento video.
+                    </video>
+                </div>
+                <div class="example-caption">
+                    <h3>Estilo Moderno</h3>
+                    <p>Fuente serif con fondo texturizado.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-film"></i>
+                <span>MatchCut</span>
+            </div>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Políticas de Privacidad</a>
+                <a href="#" class="footer-link">Términos de Servicio</a>
+                <a href="#" class="footer-link">Contacto</a>
+            </div>
+            <div class="copyright">
+                © 2025 MatchCut. Todos los derechos reservados.
+            </div>
+        </div>
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('videoForm');
@@ -177,6 +367,98 @@
             const submitButton = document.getElementById('generateButton');
             const aiEnabled = document.getElementById('ai_enabled');
             const aiConfig = document.getElementById('ai-config');
+            const themeToggle = document.getElementById('theme-toggle');
+            const selectedFont = document.getElementById('selected_font');
+            const fontPreviewText = document.getElementById('font-preview-text');
+
+            // Theme toggle functionality
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                const icon = themeToggle.querySelector('i');
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Font preview functionality
+            selectedFont.addEventListener('change', function() {
+                const selectedOption = this.value;
+                if (selectedOption !== 'random') {
+                    // Load and apply the selected font for preview
+                    const newStyle = document.createElement('style');
+                    newStyle.textContent = `
+                        @font-face {
+                            font-family: 'PreviewFont';
+                            src: url('/fonts/${selectedOption}') format('truetype');
+                        }
+                        #font-preview-text {
+                            font-family: 'PreviewFont', sans-serif;
+                        }
+                    `;
+                    document.head.appendChild(newStyle);
+                } else {
+                    // Reset to default font
+                    fontPreviewText.style.fontFamily = 'inherit';
+                }
+            });
+            
+            // Custom texture upload handling
+            const textureUpload = document.getElementById('texture_upload');
+            const customTexturePreview = document.getElementById('custom_texture_preview');
+            const uploadedTexturePreview = document.getElementById('uploaded_texture_preview');
+            const removeCustomTexture = document.getElementById('remove_custom_texture');
+            const textureCustomRadio = document.getElementById('texture_custom');
+            
+            textureUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(event) {
+                        // Show the preview section
+                        customTexturePreview.style.display = 'block';
+                        
+                        // Set the background image for preview using proper CSS syntax
+                        uploadedTexturePreview.style.backgroundImage = `url("${event.target.result}")`;
+                        
+                        // Select the custom texture radio
+                        textureCustomRadio.checked = true;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('Por favor selecciona una imagen en formato JPEG o PNG');
+                }
+            });
+            
+            removeCustomTexture.addEventListener('click', function() {
+                // Reset and hide the custom texture section
+                customTexturePreview.style.display = 'none';
+                uploadedTexturePreview.style.backgroundImage = '';
+                textureUpload.value = '';
+                
+                // Select the "none" option
+                document.getElementById('texture_none').checked = true;
+            });
 
             // Update color preview when color inputs change
             document.querySelectorAll('input[type="color"]').forEach(input => {
@@ -200,6 +482,16 @@
                     if (!apiKey) {
                         e.preventDefault();
                         alert('Por favor ingresa una API key para usar la generación de texto con IA');
+                        return;
+                    }
+                }
+                
+                // Ensure that if custom texture is selected, there's actually a file
+                if (textureCustomRadio.checked) {
+                    const textureFile = textureUpload.files[0];
+                    if (!textureFile) {
+                        e.preventDefault();
+                        alert('Has seleccionado textura personalizada pero no has subido ningún archivo. Por favor sube una imagen o selecciona otra textura.');
                         return;
                     }
                 }

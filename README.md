@@ -9,8 +9,9 @@ Un generador de videos con efectos de texto dinámicos, enfocado en crear transi
 * **Interfaz Web Intuitiva** - Diseño moderno y fácil de usar
 * **Efectos Visuales Avanzados:**
   * Desenfoque radial y gaussiano personalizables
-  * Texturas de fondo predefinidas
+  * Texturas de fondo predefinidas y personalizadas
   * Resaltado dinámico de texto
+  * Previsualización de texturas
 * **Múltiples Proveedores de IA:**
   * Mistral AI
   * Google Gemini
@@ -20,7 +21,8 @@ Un generador de videos con efectos de texto dinámicos, enfocado en crear transi
   * Colores de texto y fondo
   * Dimensiones del video
   * Duración y FPS ajustables
-  * Fuentes personalizables
+  * Selección de fuentes tipográficas
+  * Subida de texturas personalizadas
 
 ## 🛠️ Requisitos
 
@@ -33,8 +35,8 @@ Un generador de videos con efectos de texto dinámicos, enfocado en crear transi
 
 1. **Clonar el Repositorio:**
    ```bash
-   git clone https://github.com/Emanuel0428/text-match-cut.git
-   cd text-match-cut
+   git clone https://github.com/Emanuel0428/Match_cut.git
+   cd Match_cut
    ```
 
 2. **Configurar Entorno Virtual:**
@@ -58,8 +60,23 @@ Un generador de videos con efectos de texto dinámicos, enfocado en crear transi
 ## 🎮 Uso
 
 1. **Iniciar la Aplicación:**
+   
+   **Desarrollo (con recarga automática):**
    ```bash
+   # Usando el script de inicio
+   start_dev.bat
+   
+   # O manualmente
    python app.py
+   ```
+   
+   **Producción (con múltiples workers):**
+   ```bash
+   # Usando el script de inicio
+   start_prod.bat
+   
+   # O manualmente
+   gunicorn -c gunicorn_config.py app:app
    ```
 
 2. **Acceder a la Interfaz:**
@@ -67,33 +84,48 @@ Un generador de videos con efectos de texto dinámicos, enfocado en crear transi
 
 3. **Crear tu Video:**
    * Escribe el texto a resaltar
-   * Selecciona una textura de fondo o color sólido
-   * Configura los efectos visuales
+   * Selecciona una fuente tipográfica
+   * Escoge una textura de fondo existente o sube la tuya
+   * Configura los efectos visuales y colores
    * ¡Genera y descarga tu video!
 
 ## 📁 Estructura del Proyecto
 
 ```
-text-match-cut/
-├── app.py              # Aplicación principal
-├── requirements.txt    # Dependencias
+Match_cut/
+├── app.py                  # Aplicación principal (Flask)
+├── gunicorn_config.py      # Configuración para despliegue con Gunicorn
+├── start_dev.bat           # Script de inicio para desarrollo (Windows)
+├── start_prod.bat          # Script de inicio para producción (Windows)
+├── requirements.txt        # Dependencias
+├── modules/                # Módulos organizados por funcionalidad
+│   ├── __init__.py        
+│   ├── ai_providers.py     # Integración con APIs de IA
+│   ├── image_processing.py # Procesamiento de imágenes y texto
+│   ├── textures.py         # Manejo de texturas y efectos visuales
+│   ├── text_generation.py  # Generación de texto (aleatoria)
+│   └── video_generator.py  # Generador del video final
 ├── templates/         
-│   └── index.html     # Interfaz web
+│   └── index.html          # Interfaz web
 ├── static/
-│   └── style.css      # Estilos
-├── fonts/             # Fuentes tipográficas
-├── media/             # Texturas
-└── output/            # Videos generados
+│   └── style.css           # Estilos
+├── fonts/                  # Fuentes tipográficas
+├── media/                  # Texturas de fondo
+└── output/                 # Videos generados
 ```
 
 ## ✨ Mejoras Implementadas
 
-* Soporte para texturas de fondo
+* Estructura de código modular y organizada
+* Soporte para texturas de fondo y subida de texturas personalizadas
 * Sistema mejorado de desenfoque radial
 * Mejor manejo de texto y posicionamiento
-* Interfaz de usuario modernizada
+* Interfaz de usuario modernizada con previsualización de elementos
+* Selección de fuentes tipográficas
 * Soporte para múltiples proveedores de IA
 * Sistema robusto de manejo de errores
+* Configuración para despliegue en producción con Gunicorn
+* Scripts de inicio automatizados para Windows
 
 ## 🤝 Créditos
 
