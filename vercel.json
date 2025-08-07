@@ -1,0 +1,55 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "vercel_app.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb",
+        "runtime": "python3.9"
+      }
+    },
+    {
+      "src": "static/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/static/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/media/(.*)",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/output/(.*)",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/generate",
+      "dest": "/vercel_app.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/vercel_app.py"
+    }
+  ],
+  "env": {
+    "PYTHONPATH": ".",
+    "UPLOAD_FOLDER": "/tmp/match_cut_output",
+    "FONT_DIR": "fonts",
+    "MEDIA_DIR": "media"
+  },
+  "functions": {
+    "vercel_app.py": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+}
