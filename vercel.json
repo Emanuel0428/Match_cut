@@ -6,7 +6,8 @@
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
+        "runtime": "python3.9",
+        "maxDuration": 60
       }
     },
     {
@@ -45,11 +46,5 @@
     "UPLOAD_FOLDER": "/tmp/match_cut_output",
     "FONT_DIR": "fonts",
     "MEDIA_DIR": "media"
-  },
-  "functions": {
-    "vercel_app.py": {
-      "memory": 1024,
-      "maxDuration": 60
-    }
   }
 }
